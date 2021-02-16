@@ -23,21 +23,10 @@
 #include <fcntl.h>
 #include <limits.h>
 #ifndef _WIN32
-#include <unistd.h>
-#include <sys/param.h> /* MAXPATHLEN */
-#ifndef strlcpy
-/* Linux has no concept of strlcpy(). */
-#define strlcpy(x, y, z) snprintf((x), (z), "%s", (y))
-#endif
+#  include <unistd.h>
 #else /* ifdef WIN32 */
-#include <io.h>        /* io.h does mostly replace unistd.h */
-#include <sys/types.h> /* off_t support */
-
-/* Windows does not have MAXPATHLEN. */
-#define MAXPATHLEN _MAX_PATH
-
-/* Nor does it have strlcpy(). */
-#define strlcpy(x, y, z) strncpy_s((x), (z), (y), _TRUNCATE)
+#  include <io.h>        /* io.h does mostly replace unistd.h */
+#  include <sys/types.h> /* off_t support */
 #endif
 
 
@@ -65,11 +54,8 @@ int main(int argc, char *argv[]) {
         return(EXIT_FAILURE);
     }
 
-    char inputfile[MAXPATHLEN];
     off_t file_bytes;
-
-    strlcpy(inputfile, argv[1], sizeof(inputfile));
-    int fd_inputfile = open(inputfile, O_RDONLY);
+    int fd_inputfile = open(argv[1], O_RDONLY);
 
     if (!fd_inputfile) {
         /* Couldn't open the file. */
